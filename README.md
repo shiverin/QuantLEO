@@ -53,22 +53,38 @@ Standard pairs trading relies on OLS regression, which assumes a static hedge ra
 *   **Implementation:** We utilize a **Kalman Filter** to dynamically estimate the "hidden state" (the cointegration coefficient) of a pair.
 *   **The Math:**
     We model the hedge ratio $\beta_t$ as a random walk:
-    $$ \beta_t = \beta_{t-1} + \omega_t, \quad \omega_t \sim \mathcal{N}(0, Q) $$
-    The observed spread $y_t$ is:
-    $$ y_t = x_t \beta_t + \epsilon_t, \quad \epsilon_t \sim \mathcal{N}(0, R) $$
+    The hedge ratio is modeled as a time-varying parameter:
+    βₜ = βₜ₋₁ + ωₜ
+    ωₜ ~ Normal(0, Q)
+    The observed spread yₜ is given by: yₜ = xₜ · βₜ + εₜ, εₜ ~ Normal(0, R)
+
+This formulation allows the hedge ratio to evolve over time rather than remain fixed. As a result, the algorithm can adapt to structural breaks or regime changes in asset correlation, reducing drawdowns during prolonged divergence events.
     This allows the algorithm to adapt to structural breaks in correlation instantly, reducing drawdown during divergence events.
 
 ### 2. Market Regime Detection (Unsupervised Learning)
 Strategies that work in bull markets often fail in high-volatility sideways markets.
 *   **Implementation:** A **Gaussian Hidden Markov Model (HMM)** is trained on VIX and SPY returns to classify the market into latent states (e.g., *Low Vol/Bull*, *High Vol/Panic*).
-*   **Application:** The risk manager module adjusts the leverage ratio dynamically based on the detected state probability $P(S_t | \text{Data})$.
+*   **Application:** The risk manager module adjusts the leverage ratio dynamically based on the detected state probability P(Sₜ | Data).
 
 ### 3. Robust Portfolio Optimization
 We reject Mean-Variance Optimization (MVO) due to its sensitivity to input noise (estimation error maximization).
 *   **Implementation:** We use **Convex Optimization (`cvxpy`)** to solve for weights $w$.
 *   **Objective:** Maximize Utility subject to **L1 Regularization** (sparsity) and **Turnover Constraints** (transaction costs).
-    $$ \text{maximize} \quad w^T \mu - \lambda w^T \Sigma w - \gamma ||w||_1 $$
-    $$ \text{subject to} \quad \sum w_i = 1, \quad w_i \geq 0, \quad ||w_t - w_{t-1}||_1 \leq \delta $$
+    Maximize:
+    wᵀ μ − λ · wᵀ Σ w − γ · ||w||₁
+    Subject to the constraints:
+    Sum of weights equals 1 (∑ wᵢ = 1)
+    No short-selling (wᵢ ≥ 0)
+    Turnover constraint between rebalancing periods (||wₜ − wₜ₋₁||₁ ≤ δ)
+    Where:
+    - w is the portfolio weight vector
+    - μ is the expected return vector
+    - Σ is the covariance matrix
+    - λ controls risk aversion
+    - γ controls sparsity (L1 regularization)
+    - δ limits excessive trading and transaction costs
+This formulation balances return maximization, risk control, sparse portfolios, and realistic turnover constraints.
+
 *   **Covariance Cleaning:** We apply **Ledoit-Wolf Shrinkage** to the covariance matrix $\Sigma$ to mitigate off-diagonal noise.
 
 ---
@@ -102,32 +118,6 @@ We reject Mean-Variance Optimization (MVO) due to its sensitivity to input noise
 *   Docker & Docker Compose
 *   Alpaca API Keys (Paper Trading)
 
-### Installation
-
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/yourusername/quantscale.git
-    cd quantscale
-    ```
-
-2.  **Environment Setup**
-    Create a `.env` file in the root directory:
-    ```env
-    ALPACA_API_KEY=your_key_here
-    ALPACA_SECRET_KEY=your_secret_here
-    POSTGRES_USER=quant
-    POSTGRES_PASSWORD=password
-    ```
-
-3.  **Build and Run**
-    ```bash
-    docker-compose up --build
-    ```
-
-4.  **Access the Dashboard**
-    Navigate to `http://localhost:3000` to access the UI.
-    API Docs (Swagger) available at `http://localhost:8000/docs`.
-
 ---
 
 ## 📉 Example Usage Flow
@@ -140,10 +130,4 @@ We reject Mean-Variance Optimization (MVO) due to its sensitivity to input noise
 
 ---
 
-## ⚠️ Disclaimer
-
-This software is for educational and research purposes only. It is not financial advice. The "Paper Trading" environment simulates trades with fake money. Do not use this code for live trading with real capital without extensive testing and risk management auditing.
-
----
-
-*Project maintained by [Your Name]. Open for collaboration.*
+*Project maintained by Tan Jia Jun & Zhao Shi Zhen*
