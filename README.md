@@ -1,4 +1,4 @@
-# QuantLEO
+# O(Alpha)
 quanting into janestreet
 ***
 
