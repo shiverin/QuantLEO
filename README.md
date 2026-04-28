@@ -2,14 +2,14 @@
 quanting into janestreet
 ***
 
-# QuantLEO: Autonomous Portfolio Management System (PMS)
+# O(Alpha): Autonomous Portfolio Management System (PMS)
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/yourusername/quantscale)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
 [![Status](https://img.shields.io/badge/status-alpha-orange)]()
 
-**QuantScale** is a full-stack algorithmic trading platform designed to simulate the lifecycle of a quantitative hedge fund. It enables users to parameterize strategies, perform rigorous backtesting using vectorized computation, and execute paper trades via the Alpaca API.
+**O(Alpha)** is a full-stack algorithmic trading platform designed to simulate the lifecycle of a quantitative hedge fund. It enables users to parameterize strategies, perform rigorous backtesting using vectorized computation, and execute paper trades via the Alpaca API.
 
 Unlike retail trading bots that rely on technical indicators (RSI, MACD), QuantScale utilizes **stochastic calculus**, **convex optimization**, and **unsupervised machine learning** to solve for optimal portfolio allocation while strictly adhering to risk constraints.
 
